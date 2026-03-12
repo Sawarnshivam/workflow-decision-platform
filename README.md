@@ -356,6 +356,37 @@ Test cases include
 - External service failure handling
 
 ---
+## 🧪 Test Coverage
+
+The system includes test scenarios that validate different decision paths and failure conditions.
+
+Tests can be executed using:
+
+```
+python -m tests.test_requests
+```
+
+### Covered Test Scenarios
+
+| Scenario | Description |
+|--------|-------------|
+| **Happy Path** | Valid request where all rules pass and the workflow returns **APPROVE** |
+| **Low Income / Rule Failure** | Request fails income rule resulting in **REJECT** |
+| **Duplicate Request** | Duplicate request detection triggers rule failure |
+| **Dependency Failure** | External credit service may fail and simulate service errors |
+| **Retry Flow** | Credit rule retries the external service before returning failure |
+| **Rule Change Scenario** | Workflow decisions adapt automatically based on rule evaluation results |
+
+### Example Test Cases
+
+The test file `tests/test_requests.py` includes:
+
+- `test_success_case()` → validates successful approval
+- `test_low_income()` → validates rule failure scenario
+- `test_duplicate_request()` → validates duplicate detection
+- `test_external_failure()` → validates external dependency handling
+
+These tests ensure the decision platform behaves correctly across both normal and failure scenarios.
 
 ## 🛠 Technologies Used
 
