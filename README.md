@@ -113,6 +113,14 @@ The system design assumes:
 9. Audit Manager logs system events.
 10. The API returns the final decision to the client.
 
+## Idempotency
+
+The system uses `request_id` as a unique identifier for each request.
+
+This ensures that repeated submissions of the same request can be detected and handled consistently.
+
+In production systems, idempotency could be implemented by storing processed request IDs in a persistent store (e.g., Redis or database) to prevent duplicate processing.
+
 ## 📂 Project Structure
 
 ```
@@ -518,6 +526,18 @@ FINAL_DECISION → REJECT
 | Pydantic | Request validation |
 | Uvicorn | ASGI server |
 
+---
+## Scaling Considerations
+
+The system design allows future scaling through several strategies:
+
+- **Stateless API layer** allows horizontal scaling behind a load balancer.
+- **External services** can be separated into independent microservices.
+- **Persistent storage layer** can replace in-memory state management.
+- **Message queues** (Kafka/RabbitMQ) could be introduced for asynchronous rule processing.
+- **Caching layers** can reduce repeated external service calls.
+
+These design choices allow the platform to evolve into a scalable production-grade decision system.
 ---
 
 ## 📌 Use Cases
