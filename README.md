@@ -224,13 +224,23 @@ Example response
 
 ```json
 {
- "request_id": 10,
- "decision": "APPROVE",
- "rules": [
-   {"rule": "income_rule", "result": "PASS"},
-   {"rule": "duplicate_rule", "result": "PASS"},
-   {"rule": "credit_rule", "result": "PASS", "score": 645}
- ]
+  "request_id": 10,
+  "decision": "REJECT",
+  "rules": [
+    {
+      "rule": "income_rule",
+      "result": "PASS"
+    },
+    {
+      "rule": "duplicate_rule",
+      "result": "PASS"
+    },
+    {
+      "rule": "credit_rule",
+      "result": "FAIL",
+      "score": 550
+    }
+  ]
 }
 ```
 
@@ -388,6 +398,117 @@ The test file `tests/test_requests.py` includes:
 
 These tests ensure the decision platform behaves correctly across both normal and failure scenarios.
 
+## 🧠 Decision Explanation Examples
+
+The platform provides transparent decision explanations by showing the **input request**, **rules triggered**, and the **final decision** returned by the system.
+
+---
+
+### Example 1 — Approved Request (Happy Path)
+
+**Input**
+
+```json
+{
+ "request_id": 101,
+ "income": 75000,
+ "is_duplicate": false
+}
+```
+
+**Rules Triggered**
+
+| Rule | Result | Details |
+|-----|------|------|
+Income Rule | PASS | Income above minimum threshold |
+Duplicate Rule | PASS | Request not duplicated |
+Credit Rule | PASS | Credit score = 612 |
+
+**Output**
+
+```json
+{
+ "request_id": 101,
+ "decision": "APPROVE",
+ "rules": [
+   {
+     "rule": "income_rule",
+     "result": "PASS"
+   },
+   {
+     "rule": "duplicate_rule",
+     "result": "PASS"
+   },
+   {
+     "rule": "credit_rule",
+     "result": "PASS",
+     "score": 612
+   }
+ ]
+}
+```
+
+**Audit Reasoning**
+
+```
+REQUEST_RECEIVED
+RULES_EVALUATED → all rules passed
+FINAL_DECISION → APPROVE
+```
+
+---
+
+### Example 2 — Rejected Request (Low Income)
+
+**Input**
+
+```json
+{
+ "request_id": 102,
+ "income": 20000,
+ "is_duplicate": false
+}
+```
+
+**Rules Triggered**
+
+| Rule | Result | Details |
+|-----|------|------|
+Income Rule | FAIL | Income below minimum threshold |
+Duplicate Rule | PASS | Request not duplicated |
+Credit Rule | FAIL | Credit score = 573 |
+
+**Output**
+
+```json
+{
+ "request_id": 102,
+ "decision": "REJECT",
+ "rules": [
+   {
+     "rule": "income_rule",
+     "result": "FAIL"
+   },
+   {
+     "rule": "duplicate_rule",
+     "result": "PASS"
+   },
+   {
+     "rule": "credit_rule",
+     "result": "FAIL",
+     "score": 573
+   }
+ ]
+}
+```
+
+**Audit Reasoning**
+
+```
+REQUEST_RECEIVED
+RULES_EVALUATED → income rule failed
+FINAL_DECISION → REJECT
+```
 ## 🛠 Technologies Used
 
 | Technology | Purpose |
