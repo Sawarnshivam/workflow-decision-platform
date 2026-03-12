@@ -263,6 +263,82 @@ Example configuration
 This allows workflow changes without modifying the application code.
 
 ---
+## ⚙ Configuration Model
+
+The platform is designed to allow **workflows and rules to be configurable without modifying the core system logic**.
+
+### Workflow Configuration
+
+Workflow behavior is defined in the configuration file:
+
+```
+config/workflow_config.json
+```
+
+Example:
+
+```json
+{
+  "workflow": {
+    "start": "RULE_CHECK",
+    "steps": {
+      "RULE_CHECK": {
+        "on_pass": "APPROVE",
+        "on_fail": "REJECT"
+      }
+    }
+  }
+}
+```
+
+This configuration determines how rule evaluation results translate into final workflow decisions.
+
+For example:
+
+| Rule Result | Workflow Action |
+|-------------|----------------|
+PASS | APPROVE |
+FAIL | REJECT |
+
+Updating this file allows workflow behavior to change without modifying application code.
+
+---
+
+### Rule Configuration
+
+Rules are implemented as modular components inside the `rules/` folder.
+
+```
+rules/
+ ├── income_rule.py
+ ├── duplicate_rule.py
+ └── credit_rule.py
+```
+
+Each rule follows a common interface:
+
+```
+evaluate(data) → PASS / FAIL
+```
+
+Example rule configuration:
+
+- **Income Rule** → checks minimum income threshold
+- **Duplicate Rule** → checks duplicate requests
+- **Credit Rule** → checks credit score via external service
+
+New rules can be added by implementing a new rule class and registering it in the Rule Engine.
+
+---
+
+### Benefits of This Configuration Model
+
+- Allows **workflow logic to change without code modifications**
+- Enables **easy addition of new rules**
+- Supports **extensibility for new decision workflows**
+- Keeps business logic **separate from system infrastructure**
+
+This design makes the system flexible and adaptable to different decision-making scenarios.
 
 ## 🧪 Running Tests
 
