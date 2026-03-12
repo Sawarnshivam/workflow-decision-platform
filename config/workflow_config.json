@@ -1,0 +1,11 @@
+{
+  "workflow": {
+    "start": "RULE_CHECK",
+    "steps": {
+      "RULE_CHECK": {
+        "on_pass": "APPROVE",
+        "on_fail": "REJECT"
+      }
+    }
+  }
+}
